@@ -1,0 +1,299 @@
+<apex:component access="global" controller="PDIInvoiceController" layout="none">
+	<html>
+		<body>
+			<div class="wrapper">
+				<div class="logo">
+					<img src="{!logo_url}" style="width:205px;"/>
+				</div>
+				<div class="invoice-info-div">
+					<table border="0" frame="void" class="invoice-info-table">
+						<tr>
+							<td>Invoice #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td>{!this_order.ECS__External_Order_ID__c}</td>
+						</tr>
+						<tr>
+							<td>Order Time&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+							<td><apex:outputText value="{0,date,MM.dd.yyyy HH:mm}"> <apex:param value="{!this_order.ECS__Order_Time__c}" /> </apex:outputText></td>
+						</tr>
+						<tr>
+							<td>Status</td>
+							<td>{!local_status}</td>
+						</tr>
+						<tr>
+							<apex:outputText escape="false" value="{!tracking_number}"/>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<br/>
+			<div class="address-wrapper">
+				<div class="billing-address-div">
+					<table border="0" frame="void" class="billing-address-table">
+						<tr>
+							<th class="table-header">Billing Address:</th>
+						</tr>
+						<apex:outputText escape="false" value="{!bill_company}"/>
+						<tr>
+							<td>{!this_order.ECS__Bill_To_Name__c}</td>
+						</tr>
+						<tr>
+							<td>{!this_order.ECS__Billing_Address__r.ECS__Address_Line_1__c}</td>
+						</tr>
+						<apex:outputText escape="false" value="{!bill_address_line_2}"/>
+						<tr>
+							<td>{!this_order.ECS__Billing_Address__r.ECS__City__c}, {!this_order.ECS__Billing_Address__r.ECS__State_Province_Region__c} {!this_order.ECS__Billing_Address__r.ECS__Zip_Postal_Code__c}</td>
+						</tr>
+						<tr>
+							<td>{!this_order.ECS__Billing_Address__r.ECS__Country__c}</td>
+						</tr>
+						<apex:outputText escape="false" value="{!bill_phone_number}"/>
+					</table>
+				</div>
+				<div class="shipping-address-div">
+					<table border="0" frame="void" class="shipping-address-table">
+						<tr>
+							<th class="table-header">Shipping Address:</th>
+						</tr>
+						<apex:outputText escape="false" value="{!ship_company}"/>
+						<tr>
+							<td>{!this_order.ECS__Ship_To_Name__c}</td>
+						</tr>
+						<tr>
+							<td>{!this_order.ECS__Shipping_Address_Line_1__c}</td>
+						</tr>
+						<apex:outputText escape="false" value="{!ship_address_line_2}"/>
+						<tr>
+							<td>{!this_order.ECS__Shipping_Address_City__c}, {!this_order.ECS__Shipping_Address_State__c} {!this_order.ECS__Shipping_Address_Zip_Code__c}</td>
+						</tr>
+						<tr>
+							<td>{!this_order.ECS__Shipping_Address_Country__c}</td>
+						</tr>
+						<apex:outputText escape="false" value="{!ship_phone_number}"/>
+					</table>
+				</div>
+			</div><br/>
+			
+			<div class="purchase-info">
+				<table border="0" frame="void" class="purchase-info-table">
+					<tr>
+						<th class="table-header">Account</th>
+						<th class="table-header">PO</th>
+						<th class="table-header">Terms</th>
+						<th class="table-header">Type of Payment</th>
+					</tr>
+					<tr>
+						<td>{!this_order.ECS__Account__r.Name}</td>
+						<td>{!this_order.ECS__Purchase_Order_Number__c}</td>
+						<td>{!this_order.ECS__Terms__c}</td>
+						<td>{!this_order.ECS__Payment_Type__c}</td>
+					</tr>
+				</table>
+			</div><br/>
+			
+			<div class="purchased-products">
+				<table class="purchased-products-table">
+					<tr>
+						<th class="short-long-table-header">SKU</th>
+						<th class="long-table-header">Product Title</th>
+						<th class="short-table-header">QTY</th>
+						<th class="short-table-header">Price</th>
+						<th class="short-table-header">Amount</th>
+					</tr>
+					
+					<apex:repeat value="{!products_purchased}" var="product">
+						<tr>
+							<td class="short-long-td">{!product.ECS__Product__r.Name}</td>
+							<td class="long-td">{!product.ECS__Product_Title__c}</td>
+							<td class="short-td">{!product.ECS__Quantity_Purchased__c}</td>
+							<td class="short-td">${!product.ECS__Purchase_Price__c}</td>
+							<td class="short-td">${!product.ECS__Purchase_Total__c}</td>
+						</tr>
+					</apex:repeat>
+				</table>
+			</div><br/>
+			
+			<div>
+				<table border="0" class="summary-table">
+					<tr>
+						<apex:outputText escape="false" value="{!discount_amount}"/>
+					</tr>
+					<tr>
+						<td>Shipping&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>${!shipping_total}</td>
+					</tr>
+					<tr>
+						<td>Tax&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>${!tax_total}</td>
+					</tr>
+					<tr>
+						<td>Order Total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>${!total_amount}</td>
+					</tr>
+				</table>
+			</div>
+		</body>
+		<footer>
+			<p>3200 NW 27th AVE, STE 100 &middot; Pompano Beach, FL 33069</p>
+			<p>P: (954) 467-1226 &middot; F: (954) 767-8398</p>
+		</footer>
+	</html>
+	
+	<style type="text/css">
+	
+	@page {
+	    margin-top: 0.5in;
+	    margin-left: 0.5in;
+	    margin-right: 0.5in;
+	    margin-bottom: 1.3in;
+	    
+	    @bottom-left {
+            content: element(footer);
+        }
+	}
+	
+	body {
+		position: relative;
+		height: 820px;
+		page-break-after: auto;
+	}
+	
+	footer {
+		display: block;
+        padding: 5px;
+		color: #808080;
+	    text-align: center;
+	    width: 100%;
+	    position: running(footer);
+	    vertical-align: text-top;
+	}
+	
+	.wrapper {
+		width: 100%;
+		height: 120px;
+	}
+	
+	.logo {
+		float:left;
+		width: 250px;
+	}
+	
+	.invoice-info-div {
+		float: right;
+    	width: 350px;
+		text-align: center;
+	}
+	
+	.invoice-info-table {
+		border-collapse: collapse;
+		float: right;
+		text-align: left;
+	}
+	
+	.address-wrapper {
+		width: 100%;
+		overflow: hidden;
+	}
+	
+	.billing-address-div {
+		float: left;
+		width: 50%;
+	}
+	
+	.billing-address-table {
+		width: 90%;
+		border-collapse: collapse;
+	}
+	
+	.shipping-address-div {
+		width: 50%;
+		float: right;
+	}
+	
+	.shipping-address-table {
+		width: 90%;
+		border-collapse: collapse;
+	}
+	
+	.table-header {
+		font-weight: bold;
+		border-bottom: 1px solid #ddd;
+	}
+	
+	.long-table-header {
+		font-weight: bold;
+    	border-bottom: 1px solid #ddd;
+    	width: 45%;
+	}
+	
+	.short-long-table-header {
+		font-weight: bold;
+    	border-bottom: 1px solid #ddd;
+    	width: 25%;
+	}
+	
+	.short-table-header {
+		font-weight: bold;
+		border-bottom: 1px solid #ddd;
+		width: 10%;
+	}
+	
+	.long-td {
+		padding: 5px 5px;
+		width: 55%;
+		text-align: left;
+		vertical-align: text-top;
+		border-bottom: 1px solid #ddd;
+	}
+	
+	.short-long-td {
+		padding: 5px 5px;
+		text-align: left;
+		vertical-align: text-top;
+		border-bottom: 1px solid #ddd;
+    	width: 25%;
+	}
+	
+	.short-td {
+		padding: 5px 5px;
+		width: 10%;
+		text-align: left;
+		vertical-align: text-top;
+		border-bottom: 1px solid #ddd;
+	}
+	
+	.purchase-info {
+		width: 100%;
+	}
+	
+	.purchase-info-table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+	
+	.purchased-products {
+		width: 100%;
+	}
+	
+	.purchased-products-table {
+		border-collapse: collapse;
+		text-align: left;
+		table-layout: fixed;
+		page-break-inside: always;
+		margin: 0px;
+		overflow: hidden;
+	}
+	
+	.purchased-products-tr {
+		page-break-inside: avoid;
+		page-break-after: auto;
+	}
+	
+	.summary-table {
+		color: #000000;
+		table-layout: auto;
+		page-break-inside: auto;
+		border-collapse: collapse;
+		float: right;
+	}
+	</style>
+</apex:component>
